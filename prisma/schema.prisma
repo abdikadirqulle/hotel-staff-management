@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url    = env("DATABASE_URL")
+}
+
+model Staff {
+  id         String       @id @default(cuid())
+  name       String
+  email      String       @unique
+  role       String
+  hourlyRate Decimal      @map("hourly_rate")
+  status     StaffStatus  @default(ACTIVE)
+  shifts     Shift[]
+  attendance Attendance[]
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+
+  @@map("staff")
+}
+
+model Shift {
+  id        String       @id @default(cuid())
+  date      DateTime
+  startTime DateTime     @map("start_time")
+  endTime   DateTime     @map("end_time")
+  location  String
+  staff     Staff        @relation(fields: [staffId], references: [id])
+  staffId   String       @map("staff_id")
+  attendance Attendance?
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  @@map("shifts")
+}
+
+model Attendance {
+  id           String    @id @default(cuid())
+  checkInTime  DateTime  @map("check_in_time")
+  checkOutTime DateTime? @map("check_out_time")
+  shift        Shift     @relation(fields: [shiftId], references: [id])
+  shiftId      String    @unique @map("shift_id")
+  staff        Staff     @relation(fields: [staffId], references: [id])
+  staffId      String    @map("staff_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  @@map("attendance")
+}
+
+enum StaffStatus {
+  ACTIVE
+  INACTIVE
+} 
