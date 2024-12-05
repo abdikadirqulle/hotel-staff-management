@@ -45,7 +45,12 @@ export async function deleteStaff(id: string) {
 }
 
 export async function getStaff() {
-  return db.staff.findMany({
-    orderBy: { createdAt: "desc" },
-  })
+  try {
+    const staff = await db.staff.findMany({
+      orderBy: { createdAt: "desc" },
+    })
+    return staff
+  } catch (error) {
+    console.log({ "eror in getstaff": error })
+  }
 }

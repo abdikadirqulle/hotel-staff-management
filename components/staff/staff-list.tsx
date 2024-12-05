@@ -32,7 +32,7 @@ export function StaffList({ initialStaff }: { initialStaff: Staff[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {staff.map((member) => (
+          {staff?.map((member) => (
             <TableRow key={member.id}>
               <TableCell>{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>
