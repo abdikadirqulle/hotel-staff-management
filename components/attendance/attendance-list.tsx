@@ -12,6 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import type { Attendance, Shift, Staff } from "@prisma/client"
+import { Skeleton } from "../ui/skeleton"
 
 type AttendanceWithDetails = Attendance & {
   shift: Shift & {
@@ -40,10 +41,15 @@ export function AttendanceList() {
   }, [])
 
   if (isLoading) {
-    return <div>Loading attendance records...</div>
+    return (
+      <div className="flex items-start flex-col space-y-4">
+        <Skeleton className="h-6 w-[250px]" />
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-6 w-[50px]" />
+      </div>
+    )
   }
 
-  console.log({ attendance: attendance })
   return (
     <div className="rounded-md border">
       <Table>

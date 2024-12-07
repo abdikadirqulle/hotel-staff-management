@@ -6,15 +6,24 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { checkIn, checkOut } from "@/lib/actions/attendance"
 
-export function CheckInOutButton() {
+export function CheckInOutButton({ shiftId }: { shiftId?: string }) {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
   async function handleCheckIn() {
+    if (!shiftId) {
+      toast({
+        title: "Error",
+        description: "No active shift found",
+        variant: "destructive",
+      })
+      return
+    }
+
     try {
       setIsLoading(true)
-      await checkIn()
+      await checkIn(shiftId)
       toast({
         title: "Success",
         description: "Successfully checked in",

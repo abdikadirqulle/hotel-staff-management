@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { formatCurrency } from "@/lib/utils"
 import type { Staff } from "@prisma/client"
 import { DeleteStaffDialog } from "./delete-staff-dialog"
+import { DeactivateStaffDialog } from "./deactivate-staff-dialog"
 
 export function StaffList({ initialStaff }: { initialStaff: Staff[] }) {
   const [staff, setStaff] = useState(initialStaff)
@@ -47,7 +48,11 @@ export function StaffList({ initialStaff }: { initialStaff: Staff[] }) {
               </TableCell>
               <TableCell className="text-right space-x-2">
                 <EditStaffDialog staff={member} onUpdate={handleUpdate} />
-                <DeleteStaffDialog staff={member} onDelete={handleDelete} />
+                <DeactivateStaffDialog
+                  staff={member}
+                  onDeactivate={handleDelete}
+                />
+                <DeleteStaffDialog staff={member} onDelete={handleDeactivate} />
               </TableCell>
             </TableRow>
           ))}
@@ -64,5 +69,9 @@ export function StaffList({ initialStaff }: { initialStaff: Staff[] }) {
 
   function handleDelete(deletedId: string) {
     setStaff((prev) => prev.filter((s) => s.id !== deletedId))
+  }
+
+  function handleDeactivate(deactivatedId: string) {
+    setStaff((d) => d.filter((s) => s.id !== deactivatedId))
   }
 }

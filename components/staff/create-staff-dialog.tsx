@@ -59,6 +59,7 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
         ...values,
         hourlyRate: parseFloat(values.hourlyRate),
       })
+      //   revalidatePath("/staff")
       toast({
         title: "Success",
         description: "Staff member created successfully",

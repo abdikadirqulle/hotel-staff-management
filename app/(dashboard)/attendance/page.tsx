@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AttendanceList } from "@/components/attendance/attendance-list"
 import { CheckInOutButton } from "@/components/attendance/check-in-out-button"
 import { getActiveShift } from "@/lib/actions/attendance"
+import DashboardLoading from "../loading"
 
 export default async function AttendancePage() {
   const activeShift = await getActiveShift()
@@ -38,7 +39,7 @@ export default async function AttendancePage() {
         )}
         <CheckInOutButton />
       </div>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<DashboardLoading />}>
         <AttendanceList />
       </Suspense>
     </div>

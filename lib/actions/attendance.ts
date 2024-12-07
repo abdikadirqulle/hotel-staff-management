@@ -36,9 +36,19 @@ export async function getActiveShift() {
 
 export async function checkIn(shiftId: string) {
   try {
+    const shift = await db.shift.findUnique({
+      where: { id: shiftId },
+      select: { staffId: true },
+    })
+
+    if (!shift) {
+      throw new Error("Shift not found")
+    }
+
     const attendance = await db.attendance.create({
       data: {
         shiftId,
+        staffId: shift.staffId,
         checkInTime: new Date(),
       },
     })
@@ -46,7 +56,7 @@ export async function checkIn(shiftId: string) {
     return attendance
   } catch (error) {
     console.error("Error checking in:", error)
-    // throw new Error("Failed to check in")
+    return null
   }
 }
 
