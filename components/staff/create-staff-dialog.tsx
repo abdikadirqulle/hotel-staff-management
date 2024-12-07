@@ -41,6 +41,7 @@ const formSchema = z.object({
 
 export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,12 +55,12 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
     try {
       await createStaff({
         ...values,
         hourlyRate: parseFloat(values.hourlyRate),
       })
-      //   revalidatePath("/staff")
       toast({
         title: "Success",
         description: "Staff member created successfully",
@@ -72,6 +73,8 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
         description: "Failed to create staff member",
         variant: "destructive",
       })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -148,8 +151,8 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
-              Create Staff Member
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Creating..." : "Create Staff Member"}
             </Button>
           </form>
         </Form>
