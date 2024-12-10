@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getDashboardData } from "@/lib/actions/dashboard"
-import { getStaffMetrics } from "@/lib/data"
 
 export async function DashboardCards() {
   const { activeStaff, totalShifts, upcomingShifts, stats } =

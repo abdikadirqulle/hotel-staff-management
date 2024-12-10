@@ -13,6 +13,7 @@ export async function createStaff(
       ...data,
       hourlyRate: new Prisma.Decimal(data.hourlyRate) || data.hourlyRate,
       status: "ACTIVE",
+      activeShiftId: null,
     },
   })
   revalidatePath("/staff")

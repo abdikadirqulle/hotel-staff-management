@@ -38,7 +38,9 @@ export function StaffList({ initialStaff }: { initialStaff: Staff[] }) {
               <TableCell>{member.name}</TableCell>
               <TableCell>{member.email}</TableCell>
               <TableCell>{member.role}</TableCell>
-              <TableCell>{formatCurrency(member.hourlyRate)}</TableCell>
+              <TableCell>
+                {formatCurrency(member.hourlyRate.toString())}
+              </TableCell>
               <TableCell>
                 <Badge
                   variant={member.status === "ACTIVE" ? "default" : "secondary"}

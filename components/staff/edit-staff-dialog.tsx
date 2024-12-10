@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button"
 import { updateStaff } from "@/lib/actions/staff"
 import { useToast } from "@/hooks/use-toast"
 import type { Staff } from "@prisma/client"
+import Decimal from "decimal.js"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -64,7 +65,7 @@ export function EditStaffDialog({ staff, onUpdate }: EditStaffDialogProps) {
     try {
       const updatedStaff = await updateStaff(staff.id, {
         ...values,
-        hourlyRate: parseFloat(values.hourlyRate),
+        hourlyRate: new Decimal(parseFloat(values.hourlyRate)),
       })
       toast({
         title: "Success",

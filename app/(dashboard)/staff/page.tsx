@@ -27,7 +27,7 @@ export default async function StaffPage() {
         </CreateStaffDialog>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
-        <StaffList initialStaff={staff} />
+        {staff && <StaffList initialStaff={staff} />}
       </Suspense>
     </div>
   )

@@ -31,6 +31,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { createStaff } from "@/lib/actions/staff"
 import { useToast } from "@/hooks/use-toast"
+import { Decimal } from "decimal.js" // Ensure you import Decimal if not already imported
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -41,7 +42,6 @@ const formSchema = z.object({
 
 export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -55,11 +55,11 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true)
     try {
       await createStaff({
         ...values,
-        hourlyRate: parseFloat(values.hourlyRate),
+        hourlyRate: new Decimal(parseFloat(values.hourlyRate)),
+        activeShiftId: null, // Assuming null is an acceptable default value for activeShiftId
       })
       toast({
         title: "Success",
@@ -73,8 +73,6 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
         description: "Failed to create staff member",
         variant: "destructive",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -151,8 +149,8 @@ export function CreateStaffDialog({ children }: { children: React.ReactNode }) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Creating..." : "Create Staff Member"}
+            <Button type="submit" className="w-full">
+              Create Staff Member
             </Button>
           </form>
         </Form>

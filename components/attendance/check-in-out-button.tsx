@@ -40,32 +40,38 @@ export function CheckInOutButton({ shiftId }: { shiftId?: string }) {
     }
   }
 
-  async function handleCheckOut() {
-    try {
-      setIsLoading(true)
-      await checkOut()
-      toast({
-        title: "Success",
-        description: "Successfully checked out",
-      })
-      router.refresh()
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to check out",
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  //   async function handleCheckOut() {
+  //     try {
+  //       setIsLoading(true)
+  //       await checkOut()
+  //       toast({
+  //         title: "Success",
+  //         description: "Successfully checked out",
+  //       })
+  //       router.refresh()
+  //     } catch (error) {
+  //       toast({
+  //         title: "Error",
+  //         description: "Failed to check out",
+  //         variant: "destructive",
+  //       })
+  //     } finally {
+  //       setIsLoading(false)
+  //     }
+  //   }
 
   return (
     <div className="space-x-2">
-      <Button onClick={handleCheckIn} disabled={isLoading}>
+      <Button
+      //   onClick={handleCheckIn} disabled={isLoading}
+      >
         Check In
       </Button>
-      <Button onClick={handleCheckOut} disabled={isLoading} variant="outline">
+      <Button
+        //   onClick={handleCheckOut}
+        //    disabled={isLoading}
+        variant="outline"
+      >
         Check Out
       </Button>
     </div>

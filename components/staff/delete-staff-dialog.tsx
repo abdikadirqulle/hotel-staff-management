@@ -79,7 +79,7 @@ export function DeleteStaffDialog({ staff, onDelete }: DeleteStaffDialogProps) {
             onClick={handleDelete}
             disabled={isLoading}
           >
-            {isLoading ? "Deactivating..." : "Delete"}
+            {isLoading ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>
