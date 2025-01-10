@@ -20,7 +20,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
@@ -28,25 +27,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { useToast } from "@/hooks/use-toast"
+import { Shift, Staff } from "@prisma/client"
+import { updateShift } from "@/lib/actions/shifts"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { CalendarIcon, Pencil } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { format } from "date-fns"
-import { CalendarIcon, Plus } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
-import { useToast } from "@/hooks/use-toast"
-import type { Staff } from "@prisma/client"
+import { format } from "date-fns"
 
 const formSchema = z.object({
   staffId: z.string().min(1, "Staff member is required"),
-  date: z.date({
-    required_error: "Date is required",
-  }),
+  date: z.date(),
   startTime: z.string().regex(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/, {
     message: "Please enter a valid time (HH:mm)",
   }),
@@ -56,7 +55,12 @@ const formSchema = z.object({
   location: z.string().min(1, "Location is required"),
 })
 
-export function CreateShiftDialog({ children }: { children: React.ReactNode }) {
+interface UpdateShiftDialogProps {
+  shift: Shift
+  onUpdate: (shift: Shift) => void
+}
+
+export function UpdateShiftDialog({ shift, onUpdate }: UpdateShiftDialogProps) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
@@ -73,36 +77,37 @@ export function CreateShiftDialog({ children }: { children: React.ReactNode }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      staffId: "",
-      location: "",
-      startTime: "",
-      endTime: "",
+      staffId: shift.staffId,
+      date: new Date(shift.date),
+      startTime: shift.startTime.toString().slice(11, 16),
+      endTime: shift.endTime.toString().slice(11, 16),
+      location: shift.location,
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("values : ", values.startTime, values.endTime)
     try {
-      const response = await fetch("/api/shifts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...values,
-          date: format(values.date, "yyyy-MM-dd"),
-        }),
+      const formattedDate = format(values.date, "yyyy-MM-dd")
+      const updatedShift = await updateShift(shift.id, {
+        ...values,
+        date: new Date(formattedDate),
+        startTime: new Date(values.startTime),
+        endTime: new Date(values.endTime),
       })
-
-      if (!response.ok) throw new Error("Failed to create shift")
-
       toast({
         title: "Success",
-        description: "Shift created successfully",
+        description: "Shift updated successfully",
       })
+      if (updatedShift) {
+        onUpdate(updatedShift)
+      }
       setOpen(false)
       router.refresh()
     } catch {
       toast({
         title: "Error",
-        description: "Failed to create shift",
+        description: "Failed to update shift",
         variant: "destructive",
       })
     }
@@ -110,10 +115,15 @@ export function CreateShiftDialog({ children }: { children: React.ReactNode }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Pencil className="h-4 w-4" />
+          <span className="sr-only">Edit Shift</span>
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Shift</DialogTitle>
+          <DialogTitle>Edit Shift</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -240,8 +250,7 @@ export function CreateShiftDialog({ children }: { children: React.ReactNode }) {
               )}
             />
             <Button type="submit" className="w-full">
-              <Plus className="h-4 w-4" />
-              Create Shift
+              Update Shift
             </Button>
           </form>
         </Form>
